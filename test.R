@@ -174,6 +174,7 @@ RS <- function(n.cyc = control$n.cyc, no.warn = TRUE) {
         }
         # the scale-dispersion submodel
         if ("sigma" %in% names(family$parameters)) {
+            print("fitting sigma")
             if (family$parameter$sigma == TRUE & sigma.fix == FALSE) {
                 # sigma.old <- sigma
                 sigma.fit <<- glim.fit(
@@ -914,7 +915,6 @@ if (!is.null(mu.start)) {
 ##       sigma.start   starting values for sigma (optional)
 ## ---------------------------------------------------------------------------------------
 
-
 if ("sigma" %in% names(family$parameters)) {
     orig.Envir <- attr(mcall$formula, ".Environment") # DS fix for Willem Thursday, March 18, 2010
     sigma.fit <- list() # MS Thursday, January 23, 2003 at 14:48
@@ -973,7 +973,9 @@ if (!i.method) stop("Method must be RS(), CG() or mixed()")
 ## fitting the model
 fiter <- 0
 conv <- eval(substitute(RS()))
-method <- substitute(RS())
+method <- substitute(RS()) # This is where the model is fitted! # TODO
+# %%
+
 ## -----------------------------------------------------------------------------------------
 ## -----------------------------------------------------------------------------------------
 ##  Getting the GAMLSS object out
