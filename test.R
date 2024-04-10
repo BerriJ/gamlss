@@ -14,7 +14,7 @@ library(gamlss)
 # %% Simple example
 mod <- gamlss(
     formula = mpg ~ wt + hp,
-    data = mtcars,
+    data = mtcars[1:4, ],
     family = "NO",
     dataDist = "NO",
     trace = TRUE
@@ -33,7 +33,7 @@ sigma.formula <- ~1
 nu.formula <- ~1
 tau.formula <- ~1
 family <- NO()
-data <- mtcars
+data <- mtcars[1:4, ]
 
 # Irelevant for us?
 # weights <- NULL # for weighted likelihood analysis
@@ -61,7 +61,7 @@ rqres <- gamlss:::rqres
 gamlsscall <- match.call(gamlss, call("gamlss",
     formula = mpg ~ wt + hp,
     family = "NO",
-    data = mtcars,
+    data = mtcars[1:4, ],
     dataDist = "NO",
     trace = TRUE
 )) #   the function call
