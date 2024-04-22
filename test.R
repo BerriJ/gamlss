@@ -1,25 +1,49 @@
-# Install from local source
+# %% Install from local source
 rm(list = ls())
 devtools::load_all()
+library(tidyverse)
 # devtools::build()
 # devtools::install_local(force = TRUE)
 
 # Install from repository
 # remotes::install_github("BerriJ/gamlss", ref = "dev")
 
-# %% Load packages
+# Load packages
 library(gamlss)
-# %%
 
-# %% Simple example
-mod <- gamlss(
-    formula = mpg ~ wt + hp,
-    data = mtcars[1:4, ],
-    family = "NO",
-    dataDist = "NO",
-    trace = TRUE
-)
-fitted(mod, what = "sigma")
+sigma <- matrix(nrow = sum(data$tag == "train"), ncol = 24)
+
+for (i in 0:23) {
+    data <- readr::read_csv(paste0("data/regdata_", i, ".csv"),
+        show_col_types = FALSE
+    ) %>%
+        drop_na()
+
+    sum(data$tag == "train")
+
+    X <- data %>%
+        dplyr::filter(tag == "train") %>%
+        select(-tag, -Price, -Date)
+
+    Y <- data %>%
+        dplyr::filter(tag == "train") %>%
+        pull(Price)
+
+
+    mod <- gamlss(
+        formula = Y ~ as.matrix(X),
+        sigma.formula = ~ as.matrix(X),
+        # data = mtcars[1:4, ],
+        # family = "TF",
+        trace = FALSE
+    )
+
+    sigma[, i + 1] <- fitted(mod, what = "sigma")
+
+    # cat("Hour", i, ":", fitted(mod, what = "nu")[1], "\n")
+}
+
+ts.plot(sigma, col = rainbow(24), ylim = c(0, 50))
 # %%
 
 # %% Some functions that are used in the gamlss function
@@ -28,8 +52,8 @@ source("functions.R")
 
 # %% equivalent example below
 # gamlss <- function(
-formula <- formula(mpg ~ wt + hp)
-sigma.formula <- ~1
+formula <- formula(Y ~ as.matrix(X))
+sigma.formula <- formula(~ as.matrix(X))
 nu.formula <- ~1
 tau.formula <- ~1
 family <- NO()
