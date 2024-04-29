@@ -205,8 +205,9 @@ gamlss <- function(formula = formula(data),
       smooth.frame <- f$smooth.frame
       s <- f$smooth
       ## starting the recycling
-      while (abs(olddv - dv) > cc && itn < cyc) # MS Wednesday, June 26, 2002
+      for (foo_i in 1:10) # while (abs(olddv - dv) > cc && itn < cyc) # MS Wednesday, June 26, 2002
       {
+        cat("GLIM iteration ", itn, "\n")
         itn <- itn + 1 # the glim inner iteration number
         lpold <- lp
         sold <- s
@@ -230,6 +231,7 @@ gamlss <- function(formula = formula(data),
         eta <- lp + os # fixed Wednesday, September 4, 2002 at 09:45 DS
         ## own link
         fv <- f$linkinv(eta) # pmax(exp(eta), .Machine$double.eps)
+        print(round(fv[1:5], 2))
         ## own dist
         di <- f$G.di(fv) # -2 * dNO(y, mu, sigma, log = TRUE)
         olddv <- dv
@@ -306,11 +308,13 @@ gamlss <- function(formula = formula(data),
     G.dev.old <- G.dev + 1
     ## ----------------------------------------------------------------------------
     ## the outer iteration starts here
-    while (abs(G.dev.old - G.dev) > c.crit && iter < n.cyc) {
+    # for (foo_o in 1:2) # while (abs(G.dev.old - G.dev) > c.crit && iter < n.cyc)
+    {
       # the mean submodel
       if ("mu" %in% names(family$parameters)) {
         if (family$parameter$mu == TRUE & mu.fix == FALSE) {
           # mu.old <- mu
+          cat("Mu ======================================================", "\n")
           mu.fit <<- glim.fit(
             f = mu.object, X = mu.X, y = y, w = w,
             fv = mu, os = mu.offset, step = mu.step,
@@ -325,6 +329,7 @@ gamlss <- function(formula = formula(data),
       if ("sigma" %in% names(family$parameters)) {
         if (family$parameter$sigma == TRUE & sigma.fix == FALSE) {
           # sigma.old <- sigma
+          cat("Sigma ===================================================", "\n")
           sigma.fit <<- glim.fit(
             f = sigma.object, X = sigma.X, y = y,
             w = w, fv = sigma, os = sigma.offset,
@@ -339,6 +344,7 @@ gamlss <- function(formula = formula(data),
       if ("nu" %in% names(family$parameters)) {
         if (family$parameter$nu == TRUE & nu.fix == FALSE) {
           # nu.old <- nu
+          cat("Nu ======================================================", "\n")
           nu.fit <<- glim.fit(
             f = nu.object, X = nu.X, y = y,
             w = w, fv = nu, os = nu.offset,
