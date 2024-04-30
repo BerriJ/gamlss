@@ -24,12 +24,13 @@ read_csv("data/Y.csv", col_names = FALSE) %>%
 
 devtools::load_all()
 mod <- gamlss(
-    formula = Y ~ X,
-    sigma.formula = ~X,
+    formula = Y ~ X - 1,
+    sigma.formula = ~ X - 1,
+    nu.formula = ~ X - 1,
     family = "TF",
     trace = FALSE
 )
-fitted(mod, what = "sigma")
+fitted(mod, what = "mu")
 # %%
 
 # %% Some functions that are used in the gamlss function

@@ -207,6 +207,9 @@ gamlss <- function(formula = formula(data),
       ## starting the recycling
       for (foo_i in 1:10) # while (abs(olddv - dv) > cc && itn < cyc) # MS Wednesday, June 26, 2002
       {
+        if (foo_i == 1) 
+          print(fv[1:5])
+
         cat("GLIM iteration ", itn, "\n")
         itn <- itn + 1 # the glim inner iteration number
         lpold <- lp
@@ -223,6 +226,7 @@ gamlss <- function(formula = formula(data),
           #  s <- fit$smooth # test Wednesday, January 8, 2003 at 14:37
           s <- if (itn == 1) fit$smooth else step * fit$smooth + (1 - step) * sold
         } else {
+          # print((wt[1:5]))
           fit <- lm.wfit(X, wv, wt * w, method = "qr")
           lp <- if (itn == 1) fit$fitted.values else step * fit$fitted.values + (1 - step) * lpold
           # lp <- fit$fitted.values
@@ -231,7 +235,7 @@ gamlss <- function(formula = formula(data),
         eta <- lp + os # fixed Wednesday, September 4, 2002 at 09:45 DS
         ## own link
         fv <- f$linkinv(eta) # pmax(exp(eta), .Machine$double.eps)
-        print(round(fv[1:5], 2))
+        # print(round(fv[1:5], 2))
         ## own dist
         di <- f$G.di(fv) # -2 * dNO(y, mu, sigma, log = TRUE)
         olddv <- dv
