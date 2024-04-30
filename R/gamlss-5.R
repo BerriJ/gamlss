@@ -188,7 +188,9 @@ gamlss <- function(formula = formula(data),
       dr <- f$dr(eta) # dmu/deta
       dr <- 1 / dr # deta/dmu = 1 / (dmu/deta)
       di <- f$G.di(fv) # deviance increment
+      foo <<- f$G.di
       dv <- sum(w * di) # the global deviance
+      # print(dv)
       olddv <- dv + 1 # the old global deviance
       dldp <- f$dldp(fv) # u score
       d2ldp2 <- f$d2ldp2(fv) # second derivative of log-Likelihood
@@ -205,10 +207,12 @@ gamlss <- function(formula = formula(data),
       smooth.frame <- f$smooth.frame
       s <- f$smooth
       ## starting the recycling
-      for (foo_i in 1:10) # while (abs(olddv - dv) > cc && itn < cyc) # MS Wednesday, June 26, 2002
+      # print(cc)
+      while (abs(olddv - dv) > cc && itn < cyc) # MS Wednesday, June 26, 2002
       {
-        if (foo_i == 1) 
-          print(fv[1:5])
+        # if (foo_i == 2) {
+        # print(fv[1:5])
+        # }
 
         cat("GLIM iteration ", itn, "\n")
         itn <- itn + 1 # the glim inner iteration number
@@ -307,13 +311,14 @@ gamlss <- function(formula = formula(data),
     iter <- control$iter
     conv <- FALSE
     ## initial Gloval deviance
+    foo_ex <<- G.dev.expr
     G.dev.incr <- eval(G.dev.expr)
     G.dev <- sum(w * G.dev.incr)
     G.dev.old <- G.dev + 1
     ## ----------------------------------------------------------------------------
+    print(c.crit)
     ## the outer iteration starts here
-    # for (foo_o in 1:2) # while (abs(G.dev.old - G.dev) > c.crit && iter < n.cyc)
-    {
+    while (abs(G.dev.old - G.dev) > c.crit && iter < n.cyc) {
       # the mean submodel
       if ("mu" %in% names(family$parameters)) {
         if (family$parameter$mu == TRUE & mu.fix == FALSE) {
